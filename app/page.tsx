@@ -1,8 +1,8 @@
 /**
- * v1.2 — 2026-09-15
- * Mudança: nota informativa movida pra baixo do mapa (era logo abaixo do
- * cabeçalho) e texto encurtado/ajustado; rodapé passou a citar o
- * Departamento de Engenharia.
+ * v1.3 — 2026-09-15
+ * Mudança: identidade visual realinhada à marca real da Brasileira — logo
+ * no cabeçalho, título com "— Mapa Comercial", tipografia sem itálico
+ * (acompanhando a troca de fonte serifada por sans-serif arredondada).
  */
 "use client";
 
@@ -73,14 +73,25 @@ export default function Home() {
     <main className="min-h-screen bg-paper">
       <header className="border-b border-line bg-forest text-paper">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="font-display text-3xl italic tracking-tight sm:text-4xl">
-              Prospecção Brasileira
-            </p>
-            <p className="mt-2 max-w-md text-sm text-paper/70">
-              Supermercados e hotéis identificados em Cuiabá, Várzea Grande e
-              Chapada dos Guimarães, para avaliação da equipe comercial.
-            </p>
+          <div className="flex items-center gap-4">
+            <img
+              src="/logo-brasileira.png"
+              alt="Logo Brasileira Distribuidora de Frutas"
+              className="h-14 w-14 rounded-xl bg-paper object-contain p-1.5 shadow-sm sm:h-16 sm:w-16"
+            />
+            <div>
+              <p className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                Prospecção Brasileira
+                <span className="block text-base font-medium text-paper/70 sm:inline sm:text-2xl sm:font-bold sm:text-paper">
+                  {" "}
+                  — Mapa Comercial
+                </span>
+              </p>
+              <p className="mt-2 max-w-md text-sm text-paper/70">
+                Supermercados e hotéis identificados em Cuiabá, Várzea Grande e
+                Chapada dos Guimarães, para avaliação da equipe comercial.
+              </p>
+            </div>
           </div>
           <div className="flex flex-col items-start gap-3 sm:items-end">
             <p className="text-xs text-paper/60">
