@@ -1,3 +1,9 @@
+/**
+ * v1.1 — 2026-09-15
+ * Mudança: adicionada nota informativa sobre a plataforma (cobertura, fonte
+ * dos dados, natureza de protótipo, garantia de não-perda de dados) logo
+ * abaixo do cabeçalho.
+ */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -72,8 +78,8 @@ export default function Home() {
               Prospecção Brasileira
             </p>
             <p className="mt-2 max-w-md text-sm text-paper/70">
-              Supermercados e hotéis identificados na região de Cuiabá, para
-              avaliação da equipe comercial.
+              Supermercados e hotéis identificados em Cuiabá, Várzea Grande e
+              Chapada dos Guimarães, para avaliação da equipe comercial.
             </p>
           </div>
           <div className="flex flex-col items-start gap-3 sm:items-end">
@@ -105,6 +111,22 @@ export default function Home() {
           </div>
         )}
       </header>
+
+      <section className="mx-auto max-w-6xl px-6 pt-6">
+        <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm leading-relaxed text-ink/70">
+          Esta plataforma reúne, num só lugar, o mapa e a lista de clientes em
+          potencial da região. Toda segunda-feira de manhã, ela varre
+          automaticamente Cuiabá, Várzea Grande e Chapada dos Guimarães em
+          busca de novos supermercados e hotéis, usando dados do
+          OpenStreetMap — um mapa colaborativo e gratuito, diferente do
+          Google Maps. É um protótipo enxuto, sem nenhum custo de
+          hospedagem, pensado para validar a ideia antes de qualquer
+          investimento maior. E funciona com uma regra simples: a busca
+          semanal nunca apaga nada, só adiciona — tudo o que foi encontrado
+          antes continua salvo, e cada item adicionado manualmente aqui fica
+          guardado no banco de dados para sempre.
+        </p>
+      </section>
 
       <section className="mx-auto max-w-6xl px-6 py-6">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
