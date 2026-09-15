@@ -64,3 +64,30 @@ export async function atualizarRevisao(
   }
   return true;
 }
+
+export async function adicionarEstabelecimento(input: {
+  categoria: Categoria;
+  nome: string;
+  telefone?: string;
+  endereco?: string;
+  latitude: number;
+  longitude: number;
+}): Promise<boolean> {
+  const place_id = `manual-${crypto.randomUUID()}`;
+  const { error } = await supabase.from("prospeccao_estabelecimentos").insert({
+    place_id,
+    categoria: input.categoria,
+    nome: input.nome,
+    telefone: input.telefone || null,
+    endereco: input.endereco || null,
+    latitude: input.latitude,
+    longitude: input.longitude,
+    status_revisao: "novo",
+  });
+
+  if (error) {
+    console.error("Erro ao adicionar estabelecimento:", error.message);
+    return false;
+  }
+  return true;
+}
