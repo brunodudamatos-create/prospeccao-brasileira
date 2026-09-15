@@ -1,3 +1,8 @@
+/**
+ * v1.2 — 2026-09-15
+ * Mudança: cores dos pinos atualizadas para a paleta real da marca
+ * (laranja e verde-azulado do logo, no lugar da paleta genérica anterior).
+ */
 "use client";
 
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
@@ -5,8 +10,8 @@ import L from "leaflet";
 import type { Estabelecimento } from "@/lib/supabase";
 
 const CATEGORY_COLOR: Record<string, string> = {
-  supermercado: "#FF7A29",
-  hotel: "#2B6777",
+  supermercado: "#F5A300",
+  hotel: "#3D7A8C",
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -22,10 +27,10 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 function pinIcon(categoria: string) {
-  const color = CATEGORY_COLOR[categoria] ?? "#16211C";
+  const color = CATEGORY_COLOR[categoria] ?? "#241C10";
   const html = `
-    <div class="marker-pin" style="width:28px;height:28px;background:${color};border:2px solid #F5F6F1;">
-      <span style="width:8px;height:8px;border-radius:999px;background:#F5F6F1;"></span>
+    <div class="marker-pin" style="width:28px;height:28px;background:${color};border:2px solid #FFF8EC;">
+      <span style="width:8px;height:8px;border-radius:999px;background:#FFF8EC;"></span>
     </div>
   `;
 
