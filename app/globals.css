@@ -1,18 +1,24 @@
+/**
+ * v2.0 — 2026-09-15
+ * Mudança estrutural: tipografia trocada de serifada editorial para
+ * sans-serif arredondada e amigável (alinhada à identidade da marca),
+ * e cores de fundo/foco atualizadas para a nova paleta.
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-fraunces: ui-serif, Charter, "Iowan Old Style", "Palatino Linotype",
-    Georgia, serif;
+  --font-fraunces: ui-rounded, "SF Pro Rounded", "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
   --font-inter: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
 }
 
 html,
 body {
-  background-color: #f5f6f1;
-  color: #16211c;
+  background-color: #fff8ec;
+  color: #241c10;
 }
 
 * {
@@ -24,12 +30,12 @@ body {
   width: 100%;
   height: 100%;
   font-family: var(--font-body);
-  background: #ebeee5;
+  background: #fbefd8;
 }
 
 .leaflet-popup-content-wrapper {
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(22, 33, 28, 0.18);
+  box-shadow: 0 8px 24px rgba(36, 28, 16, 0.18);
 }
 
 .leaflet-popup-content {
@@ -38,7 +44,7 @@ body {
 }
 
 .leaflet-popup-tip {
-  box-shadow: 0 8px 24px rgba(22, 33, 28, 0.1);
+  box-shadow: 0 8px 24px rgba(36, 28, 16, 0.1);
 }
 
 .marker-pin {
@@ -47,7 +53,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 8px rgba(22, 33, 28, 0.35);
+  box-shadow: 0 3px 8px rgba(36, 28, 16, 0.35);
 }
 
 .marker-pin span {
@@ -55,7 +61,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid #ff7a29;
+  outline: 2px solid #f5a300;
   outline-offset: 2px;
 }
 
