@@ -1,8 +1,9 @@
 /**
- * v1.3 — 2026-09-15
- * Mudança: identidade visual realinhada à marca real da Brasileira — logo
- * no cabeçalho, título com "— Mapa Comercial", tipografia sem itálico
- * (acompanhando a troca de fonte serifada por sans-serif arredondada).
+ * v1.4 — 2026-09-15
+ * Mudança: cards de estatística e nota informativa com fundo branco
+ * sólido + sombra (antes eram brancos translúcidos com borda fina, que
+ * sumiam contra o fundo em telas grandes); botão "Adicionar no mapa"
+ * trocado de contorno fino pra preenchimento sólido, pelo mesmo motivo.
  */
 "use client";
 
@@ -102,10 +103,10 @@ export default function Home() {
             <div className="flex gap-2">
               <button
                 onClick={() => setModoAdicionar((v) => !v)}
-                className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors ${
+                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-colors ${
                   modoAdicionar
-                    ? "border-tangerine bg-tangerine text-white"
-                    : "border-paper/30 text-paper hover:bg-paper/10"
+                    ? "bg-tangerine text-white"
+                    : "bg-paper text-forest hover:bg-white"
                 }`}
               >
                 {modoAdicionar ? "Cancelar" : "Adicionar no mapa"}
@@ -125,21 +126,21 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-6 py-6">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+          <div className="rounded-2xl border border-line bg-white px-4 py-3 shadow-sm">
             <p className="text-2xl font-semibold text-ink">{dados.length}</p>
             <p className="text-xs text-ink/60">No total</p>
           </div>
-          <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+          <div className="rounded-2xl border border-line bg-white px-4 py-3 shadow-sm">
             <p className="text-2xl font-semibold text-tangerinedark">
               {totalSupermercados}
             </p>
             <p className="text-xs text-ink/60">Supermercados</p>
           </div>
-          <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+          <div className="rounded-2xl border border-line bg-white px-4 py-3 shadow-sm">
             <p className="text-2xl font-semibold text-teal">{totalHoteis}</p>
             <p className="text-xs text-ink/60">Hotéis / pousadas</p>
           </div>
-          <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+          <div className="rounded-2xl border border-line bg-white px-4 py-3 shadow-sm">
             <p className="text-2xl font-semibold text-ink">
               {dados.filter((d) => d.status_revisao === "novo").length}
             </p>
@@ -168,7 +169,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pt-6">
-        <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm leading-relaxed text-ink/70">
+        <p className="rounded-2xl border border-line bg-white px-5 py-4 text-sm leading-relaxed text-ink/70 shadow-sm">
           Esta plataforma reúne, num só lugar, o mapa e a lista de clientes em
           potencial da região. Toda segunda-feira de manhã, ela varre
           automaticamente Cuiabá, Várzea Grande e Chapada dos Guimarães em
