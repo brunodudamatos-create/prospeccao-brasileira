@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import type { Estabelecimento } from "@/lib/supabase";
 
@@ -38,7 +38,30 @@ function pinIcon(categoria: string) {
   });
 }
 
-export default function MapView({ dados }: { dados: Estabelecimento[] }) {
+function ClickCapture({
+  ativo,
+  onClick,
+}: {
+  ativo: boolean;
+  onClick: (lat: number, lng: number) => void;
+}) {
+  useMapEvents({
+    click(e) {
+      if (ativo) onClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
+
+export default function MapView({
+  dados,
+  modoAdicionar = false,
+  onMapClick,
+}: {
+  dados: Estabelecimento[];
+  modoAdicionar?: boolean;
+  onMapClick?: (lat: number, lng: number) => void;
+}) {
   const center: [number, number] =
     dados.length > 0
       ? [dados[0].latitude, dados[0].longitude]
@@ -49,8 +72,9 @@ export default function MapView({ dados }: { dados: Estabelecimento[] }) {
       center={center}
       zoom={12}
       scrollWheelZoom={true}
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", cursor: modoAdicionar ? "crosshair" : "" }}
     >
+      {onMapClick && <ClickCapture ativo={modoAdicionar} onClick={onMapClick} />}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
