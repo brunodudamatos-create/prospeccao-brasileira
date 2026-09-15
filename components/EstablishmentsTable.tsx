@@ -1,11 +1,18 @@
+/**
+ * v1.1 — 2026-09-15
+ * Mudança: adicionada paginação (25 por página) para a lista não ficar
+ * gigante conforme a base cresce.
+ */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   atualizarRevisao,
   type Estabelecimento,
   type StatusRevisao,
 } from "@/lib/supabase";
+
+const POR_PAGINA = 25;
 
 const CATEGORY_LABEL: Record<string, string> = {
   supermercado: "Supermercado",
@@ -94,6 +101,12 @@ export default function EstablishmentsTable({
 }: {
   dados: Estabelecimento[];
 }) {
+  const [pagina, setPagina] = useState(1);
+
+  useEffect(() => {
+    setPagina(1);
+  }, [dados]);
+
   if (dados.length === 0) {
     return (
       <p className="py-10 text-center text-sm text-ink/60">
@@ -102,45 +115,79 @@ export default function EstablishmentsTable({
     );
   }
 
+  const totalPaginas = Math.ceil(dados.length / POR_PAGINA);
+  const inicio = (pagina - 1) * POR_PAGINA;
+  const dadosPagina = dados.slice(inicio, inicio + POR_PAGINA);
+
   return (
-    <div className="overflow-x-auto rounded-2xl border border-line bg-white/60">
-      <table className="w-full min-w-[820px] text-left text-sm">
-        <thead>
-          <tr className="border-b border-line text-xs uppercase tracking-wide text-ink/50">
-            <th className="px-5 py-3 font-medium">Nome</th>
-            <th className="px-5 py-3 font-medium">Categoria</th>
-            <th className="px-5 py-3 font-medium">Telefone</th>
-            <th className="px-5 py-3 font-medium">Revisão</th>
-            <th className="px-5 py-3 font-medium">Encontrado em</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dados.map((item) => (
-            <tr key={item.id} className="border-b border-line/70 last:border-0">
-              <td className="px-5 py-3.5 align-top font-medium text-ink">
-                {item.nome}
-              </td>
-              <td className="px-5 py-3.5 align-top text-ink/80">
-                <span className="inline-flex items-center gap-2">
-                  <span
-                    className={`h-2 w-2 rounded-full ${CATEGORY_DOT[item.categoria] ?? "bg-ink/40"}`}
-                  />
-                  {CATEGORY_LABEL[item.categoria] ?? item.categoria}
-                </span>
-              </td>
-              <td className="px-5 py-3.5 align-top text-ink/70">
-                {item.telefone || "—"}
-              </td>
-              <td className="px-5 py-3.5 align-top">
-                <RowActions item={item} />
-              </td>
-              <td className="px-5 py-3.5 align-top text-ink/60">
-                {new Date(item.data_encontrado).toLocaleDateString("pt-BR")}
-              </td>
+    <div>
+      <div className="overflow-x-auto rounded-2xl border border-line bg-white/60">
+        <table className="w-full min-w-[820px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-line text-xs uppercase tracking-wide text-ink/50">
+              <th className="px-5 py-3 font-medium">Nome</th>
+              <th className="px-5 py-3 font-medium">Categoria</th>
+              <th className="px-5 py-3 font-medium">Telefone</th>
+              <th className="px-5 py-3 font-medium">Revisão</th>
+              <th className="px-5 py-3 font-medium">Encontrado em</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {dadosPagina.map((item) => (
+              <tr key={item.id} className="border-b border-line/70 last:border-0">
+                <td className="px-5 py-3.5 align-top font-medium text-ink">
+                  {item.nome}
+                </td>
+                <td className="px-5 py-3.5 align-top text-ink/80">
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      className={`h-2 w-2 rounded-full ${CATEGORY_DOT[item.categoria] ?? "bg-ink/40"}`}
+                    />
+                    {CATEGORY_LABEL[item.categoria] ?? item.categoria}
+                  </span>
+                </td>
+                <td className="px-5 py-3.5 align-top text-ink/70">
+                  {item.telefone || "—"}
+                </td>
+                <td className="px-5 py-3.5 align-top">
+                  <RowActions item={item} />
+                </td>
+                <td className="px-5 py-3.5 align-top text-ink/60">
+                  {new Date(item.data_encontrado).toLocaleDateString("pt-BR")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {totalPaginas > 1 && (
+        <div className="mt-4 flex items-center justify-between text-sm text-ink/60">
+          <p>
+            Mostrando {inicio + 1}–{Math.min(inicio + POR_PAGINA, dados.length)} de{" "}
+            {dados.length}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPagina((p) => Math.max(1, p - 1))}
+              disabled={pagina === 1}
+              className="rounded-full border border-line px-3 py-1.5 font-medium text-ink/70 transition-colors hover:bg-white disabled:opacity-30"
+            >
+              Anterior
+            </button>
+            <span className="px-2">
+              {pagina} / {totalPaginas}
+            </span>
+            <button
+              onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+              disabled={pagina === totalPaginas}
+              className="rounded-full border border-line px-3 py-1.5 font-medium text-ink/70 transition-colors hover:bg-white disabled:opacity-30"
+            >
+              Próxima
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
