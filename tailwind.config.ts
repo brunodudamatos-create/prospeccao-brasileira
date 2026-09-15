@@ -1,3 +1,9 @@
+/**
+ * v2.0 — 2026-09-15
+ * Mudança estrutural: paleta trocada por completo pelas cores reais da
+ * marca Brasileira (extraídas do logo — verde, laranja e amarelo), no
+ * lugar da paleta "editorial" genérica anterior.
+ */
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -8,15 +14,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#16211C",
-        paper: "#F5F6F1",
-        paperdim: "#EBEEE5",
-        forest: "#1F3B2E",
-        forestlight: "#2C5240",
-        tangerine: "#FF7A29",
-        tangerinedark: "#E8630F",
-        teal: "#2B6777",
-        line: "#D8DED2",
+        ink: "#241C10",
+        paper: "#FFF8EC",
+        paperdim: "#FBEFD8",
+        forest: "#2F8F49",
+        forestlight: "#3FA85C",
+        tangerine: "#F5A300",
+        tangerinedark: "#D68F00",
+        teal: "#3D7A8C",
+        yellow: "#F2C94C",
+        line: "#E9D9B8",
       },
       fontFamily: {
         display: ["var(--font-fraunces)"],
