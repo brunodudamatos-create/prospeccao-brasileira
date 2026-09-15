@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { fetchEstabelecimentos, type Estabelecimento } from "@/lib/supabase";
 import EstablishmentsTable from "@/components/EstablishmentsTable";
 import ExportButton from "@/components/ExportButton";
+import AddEstablishmentModal from "@/components/AddEstablishmentModal";
 
 const MapView = dynamic(() => import("@/components/MapView"), {
   ssr: false,
@@ -30,12 +31,20 @@ export default function Home() {
   const [dados, setDados] = useState<Estabelecimento[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [modoAdicionar, setModoAdicionar] = useState(false);
+  const [pontoNovo, setPontoNovo] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
 
-  useEffect(() => {
+  function recarregar() {
     fetchEstabelecimentos().then((res) => {
       setDados(res);
       setCarregando(false);
     });
+  }
+
+  useEffect(() => {
+    recarregar();
   }, []);
 
   const dadosFiltrados = useMemo(() => {
@@ -73,9 +82,28 @@ export default function Home() {
                 ? `Atualizado em ${ultimaAtualizacao}`
                 : "Carregando última atualização…"}
             </p>
-            <ExportButton dados={dados} />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setModoAdicionar((v) => !v)}
+                className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors ${
+                  modoAdicionar
+                    ? "border-tangerine bg-tangerine text-white"
+                    : "border-paper/30 text-paper hover:bg-paper/10"
+                }`}
+              >
+                {modoAdicionar ? "Cancelar" : "Adicionar no mapa"}
+              </button>
+              <ExportButton dados={dados} />
+            </div>
           </div>
         </div>
+        {modoAdicionar && (
+          <div className="mx-auto max-w-6xl px-6 pb-4">
+            <p className="rounded-full bg-tangerine/20 px-4 py-2 text-center text-sm text-paper">
+              Clique no mapa no ponto onde fica o estabelecimento
+            </p>
+          </div>
+        )}
       </header>
 
       <section className="mx-auto max-w-6xl px-6 py-6">
@@ -110,10 +138,25 @@ export default function Home() {
               Carregando estabelecimentos…
             </div>
           ) : (
-            <MapView dados={dadosFiltrados} />
+            <MapView
+              dados={dadosFiltrados}
+              modoAdicionar={modoAdicionar}
+              onMapClick={(lat, lng) => {
+                setPontoNovo({ lat, lng });
+                setModoAdicionar(false);
+              }}
+            />
           )}
         </div>
       </section>
+
+      {pontoNovo && (
+        <AddEstablishmentModal
+          ponto={pontoNovo}
+          onClose={() => setPontoNovo(null)}
+          onSaved={recarregar}
+        />
+      )}
 
       <section className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
