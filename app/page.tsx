@@ -1,16 +1,22 @@
 /**
- * v1.4 — 2026-09-15
- * Mudança: cards de estatística e nota informativa com fundo branco
- * sólido + sombra (antes eram brancos translúcidos com borda fina, que
- * sumiam contra o fundo em telas grandes); botão "Adicionar no mapa"
- * trocado de contorno fino pra preenchimento sólido, pelo mesmo motivo.
+ * v1.5 — 2026-09-15
+ * Mudança: adicionados filtros por Cidade (calculada a partir da
+ * localização, sem precisar de coluna nova no banco) e por Revisão
+ * (status), ao lado do filtro de Categoria que já existia. Os três juntos
+ * afetam tanto o mapa quanto a lista.
  */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
-import { fetchEstabelecimentos, type Estabelecimento } from "@/lib/supabase";
+import {
+  fetchEstabelecimentos,
+  inferirCidade,
+  type Cidade,
+  type Estabelecimento,
+  type StatusRevisao,
+} from "@/lib/supabase";
 import EstablishmentsTable from "@/components/EstablishmentsTable";
 import ExportButton from "@/components/ExportButton";
 import AddEstablishmentModal from "@/components/AddEstablishmentModal";
@@ -24,7 +30,9 @@ const MapView = dynamic(() => import("@/components/MapView"), {
   ),
 });
 
-type Filtro = "todos" | "supermercado" | "hotel";
+type FiltroCategoria = "todos" | "supermercado" | "hotel";
+type FiltroCidade = "todas" | Cidade;
+type FiltroStatus = "todos" | StatusRevisao;
 
 function formatarDataHora(iso: string): string {
   return new Date(iso).toLocaleString("pt-BR", {
@@ -34,10 +42,47 @@ function formatarDataHora(iso: string): string {
   });
 }
 
+function ChipGroup<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { key: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-ink/40">
+        {label}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt.key}
+            onClick={() => onChange(opt.key)}
+            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+              value === opt.key
+                ? "bg-forest text-paper"
+                : "bg-white text-ink/70 hover:bg-paperdim"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [dados, setDados] = useState<Estabelecimento[]>([]);
   const [carregando, setCarregando] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [filtroCategoria, setFiltroCategoria] = useState<FiltroCategoria>("todos");
+  const [filtroCidade, setFiltroCidade] = useState<FiltroCidade>("todas");
+  const [filtroStatus, setFiltroStatus] = useState<FiltroStatus>("todos");
   const [modoAdicionar, setModoAdicionar] = useState(false);
   const [pontoNovo, setPontoNovo] = useState<{ lat: number; lng: number } | null>(
     null
@@ -55,9 +100,22 @@ export default function Home() {
   }, []);
 
   const dadosFiltrados = useMemo(() => {
-    if (filtro === "todos") return dados;
-    return dados.filter((item) => item.categoria === filtro);
-  }, [dados, filtro]);
+    return dados.filter((item) => {
+      if (filtroCategoria !== "todos" && item.categoria !== filtroCategoria) {
+        return false;
+      }
+      if (
+        filtroCidade !== "todas" &&
+        inferirCidade(item.latitude, item.longitude) !== filtroCidade
+      ) {
+        return false;
+      }
+      if (filtroStatus !== "todos" && item.status_revisao !== filtroStatus) {
+        return false;
+      }
+      return true;
+    });
+  }, [dados, filtroCategoria, filtroCidade, filtroStatus]);
 
   const ultimaAtualizacao = useMemo(() => {
     if (dados.length === 0) return null;
@@ -150,6 +208,42 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6">
+        <div className="mb-4 flex flex-wrap gap-x-8 gap-y-4 rounded-2xl border border-line bg-white px-5 py-4 shadow-sm">
+          <ChipGroup
+            label="Categoria"
+            value={filtroCategoria}
+            onChange={setFiltroCategoria}
+            options={[
+              { key: "todos", label: "Todos" },
+              { key: "supermercado", label: "Supermercados" },
+              { key: "hotel", label: "Hotéis" },
+            ]}
+          />
+          <ChipGroup
+            label="Cidade"
+            value={filtroCidade}
+            onChange={setFiltroCidade}
+            options={[
+              { key: "todas", label: "Todas" },
+              { key: "Cuiabá", label: "Cuiabá" },
+              { key: "Várzea Grande", label: "Várzea Grande" },
+              { key: "Chapada dos Guimarães", label: "Chapada dos Guimarães" },
+            ]}
+          />
+          <ChipGroup
+            label="Revisão"
+            value={filtroStatus}
+            onChange={setFiltroStatus}
+            options={[
+              { key: "todos", label: "Todos" },
+              { key: "novo", label: "Novo" },
+              { key: "ja_e_cliente", label: "Já é cliente" },
+              { key: "nao_atende", label: "Não atende" },
+              { key: "descartado", label: "Descartado" },
+            ]}
+          />
+        </div>
+
         <div className="h-[460px] w-full overflow-hidden rounded-3xl border border-line shadow-sm sm:h-[560px]">
           {carregando ? (
             <div className="flex h-full items-center justify-center text-sm text-ink/50">
@@ -191,30 +285,14 @@ export default function Home() {
       )}
 
       <section className="mx-auto max-w-6xl px-6 py-10">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-          <h2 className="font-display text-xl text-ink">Lista completa</h2>
-          <div className="flex gap-2">
-            {(
-              [
-                { key: "todos", label: "Todos" },
-                { key: "supermercado", label: "Supermercados" },
-                { key: "hotel", label: "Hotéis" },
-              ] as { key: Filtro; label: string }[]
-            ).map((opcao) => (
-              <button
-                key={opcao.key}
-                onClick={() => setFiltro(opcao.key)}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                  filtro === opcao.key
-                    ? "bg-forest text-paper"
-                    : "bg-white/60 text-ink/70 hover:bg-white"
-                }`}
-              >
-                {opcao.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <h2 className="mb-5 font-display text-xl text-ink">
+          Lista completa
+          {dadosFiltrados.length !== dados.length && (
+            <span className="ml-2 text-sm font-normal text-ink/50">
+              ({dadosFiltrados.length} de {dados.length} com os filtros atuais)
+            </span>
+          )}
+        </h2>
 
         {carregando ? (
           <p className="py-10 text-center text-sm text-ink/50">Carregando…</p>
