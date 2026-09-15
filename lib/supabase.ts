@@ -1,3 +1,12 @@
+/**
+ * v1.1 — 2026-09-15
+ * Mudança: adicionada função inferirCidade() — calcula a cidade mais
+ * próxima (Cuiabá / Várzea Grande / Chapada dos Guimarães) a partir da
+ * latitude/longitude, pra alimentar o filtro por cidade. Nenhuma coluna
+ * nova no banco; é calculado na hora, no navegador.
+ * (Também aproveitado pra adicionar o cabeçalho de versão que faltava
+ * neste arquivo — pendência registrada no handoff.)
+ */
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
@@ -18,6 +27,7 @@ export const supabase = createClient(
 
 export type Categoria = "supermercado" | "hotel";
 export type StatusRevisao = "novo" | "ja_e_cliente" | "nao_atende" | "descartado";
+export type Cidade = "Cuiabá" | "Várzea Grande" | "Chapada dos Guimarães";
 
 export interface Estabelecimento {
   id: number;
@@ -32,6 +42,28 @@ export interface Estabelecimento {
   observacoes: string | null;
   data_encontrado: string;
   data_atualizado: string;
+}
+
+// Mesmos 3 centros usados na busca automática do Make (Overpass API).
+const CENTROS_CIDADE: { nome: Cidade; lat: number; lng: number }[] = [
+  { nome: "Cuiabá", lat: -15.6014, lng: -56.0979 },
+  { nome: "Várzea Grande", lat: -15.6467, lng: -56.1325 },
+  { nome: "Chapada dos Guimarães", lat: -15.4608, lng: -55.7499 },
+];
+
+export function inferirCidade(lat: number, lng: number): Cidade {
+  let maisProxima = CENTROS_CIDADE[0];
+  let menorDistancia = Infinity;
+
+  for (const centro of CENTROS_CIDADE) {
+    const distancia = Math.hypot(lat - centro.lat, lng - centro.lng);
+    if (distancia < menorDistancia) {
+      menorDistancia = distancia;
+      maisProxima = centro;
+    }
+  }
+
+  return maisProxima.nome;
 }
 
 export async function fetchEstabelecimentos(): Promise<Estabelecimento[]> {
