@@ -1,7 +1,7 @@
 /**
- * v1.1 — 2026-09-15
- * Mudança: adicionada paginação (25 por página) para a lista não ficar
- * gigante conforme a base cresce.
+ * v1.2 — 2026-09-15
+ * Mudança: cartão da tabela com fundo branco sólido + sombra leve, em vez
+ * de branco translúcido, pra ficar com contorno visível em telas grandes.
  */
 "use client";
 
@@ -121,7 +121,7 @@ export default function EstablishmentsTable({
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-2xl border border-line bg-white/60">
+      <div className="overflow-x-auto rounded-2xl border border-line bg-white shadow-sm">
         <table className="w-full min-w-[820px] text-left text-sm">
           <thead>
             <tr className="border-b border-line text-xs uppercase tracking-wide text-ink/50">
