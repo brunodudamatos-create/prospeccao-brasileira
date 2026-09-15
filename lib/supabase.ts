@@ -46,3 +46,21 @@ export async function fetchEstabelecimentos(): Promise<Estabelecimento[]> {
   }
   return data ?? [];
 }
+
+export async function atualizarRevisao(
+  id: number,
+  status: StatusRevisao,
+  observacoes: string
+): Promise<boolean> {
+  const { error } = await supabase.rpc("atualizar_revisao", {
+    p_id: id,
+    p_status: status,
+    p_observacoes: observacoes,
+  });
+
+  if (error) {
+    console.error("Erro ao salvar revisão:", error.message);
+    return false;
+  }
+  return true;
+}
