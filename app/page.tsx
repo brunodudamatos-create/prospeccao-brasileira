@@ -1,9 +1,7 @@
 /**
- * v1.5 — 2026-09-15
- * Mudança: adicionados filtros por Cidade (calculada a partir da
- * localização, sem precisar de coluna nova no banco) e por Revisão
- * (status), ao lado do filtro de Categoria que já existia. Os três juntos
- * afetam tanto o mapa quanto a lista.
+ * v1.6 — 2026-09-15
+ * Mudança: Poconé adicionada como 4ª cidade coberta — no filtro de
+ * cidade, no subtítulo do cabeçalho e na nota informativa.
  */
 "use client";
 
@@ -147,8 +145,9 @@ export default function Home() {
                 </span>
               </p>
               <p className="mt-2 max-w-md text-sm text-paper/70">
-                Supermercados e hotéis identificados em Cuiabá, Várzea Grande e
-                Chapada dos Guimarães, para avaliação da equipe comercial.
+                Supermercados e hotéis identificados em Cuiabá, Várzea
+                Grande, Chapada dos Guimarães e Poconé, para avaliação da
+                equipe comercial.
               </p>
             </div>
           </div>
@@ -228,6 +227,7 @@ export default function Home() {
               { key: "Cuiabá", label: "Cuiabá" },
               { key: "Várzea Grande", label: "Várzea Grande" },
               { key: "Chapada dos Guimarães", label: "Chapada dos Guimarães" },
+              { key: "Poconé", label: "Poconé" },
             ]}
           />
           <ChipGroup
@@ -266,8 +266,8 @@ export default function Home() {
         <p className="rounded-2xl border border-line bg-white px-5 py-4 text-sm leading-relaxed text-ink/70 shadow-sm">
           Esta plataforma reúne, num só lugar, o mapa e a lista de clientes em
           potencial da região. Toda segunda-feira de manhã, ela varre
-          automaticamente Cuiabá, Várzea Grande e Chapada dos Guimarães em
-          busca de novos supermercados e hotéis, usando dados do
+          automaticamente Cuiabá, Várzea Grande, Chapada dos Guimarães e
+          Poconé em busca de novos supermercados e hotéis, usando dados do
           OpenStreetMap. E funciona com uma regra: a busca semanal nunca
           apaga nenhum dado anterior, só adiciona — tudo o que foi encontrado
           antes continua salvo, e cada item adicionado manualmente aqui fica
