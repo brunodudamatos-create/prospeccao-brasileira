@@ -1,11 +1,7 @@
 /**
- * v1.1 — 2026-09-15
- * Mudança: adicionada função inferirCidade() — calcula a cidade mais
- * próxima (Cuiabá / Várzea Grande / Chapada dos Guimarães) a partir da
- * latitude/longitude, pra alimentar o filtro por cidade. Nenhuma coluna
- * nova no banco; é calculado na hora, no navegador.
- * (Também aproveitado pra adicionar o cabeçalho de versão que faltava
- * neste arquivo — pendência registrada no handoff.)
+ * v1.2 — 2026-09-15
+ * Mudança: adicionada a cidade de Poconé (raio 8km) na função
+ * inferirCidade(), acompanhando a mesma adição feita na busca do Make.
  */
 import { createClient } from "@supabase/supabase-js";
 
@@ -27,7 +23,11 @@ export const supabase = createClient(
 
 export type Categoria = "supermercado" | "hotel";
 export type StatusRevisao = "novo" | "ja_e_cliente" | "nao_atende" | "descartado";
-export type Cidade = "Cuiabá" | "Várzea Grande" | "Chapada dos Guimarães";
+export type Cidade =
+  | "Cuiabá"
+  | "Várzea Grande"
+  | "Chapada dos Guimarães"
+  | "Poconé";
 
 export interface Estabelecimento {
   id: number;
@@ -49,6 +49,7 @@ const CENTROS_CIDADE: { nome: Cidade; lat: number; lng: number }[] = [
   { nome: "Cuiabá", lat: -15.6014, lng: -56.0979 },
   { nome: "Várzea Grande", lat: -15.6467, lng: -56.1325 },
   { nome: "Chapada dos Guimarães", lat: -15.4608, lng: -55.7499 },
+  { nome: "Poconé", lat: -16.2644, lng: -56.6281 },
 ];
 
 export function inferirCidade(lat: number, lng: number): Cidade {
